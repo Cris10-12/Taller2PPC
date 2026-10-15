@@ -18,4 +18,5 @@ object GameConfig {
     const val TERRITORY_COUNT = 6
     const val BONUS_POINTS = 3
     const val FORTRESS_CONQUESTS = 2
+    const val MAX_GAME_ROUNDS = 20
 }

@@ -163,6 +163,23 @@ object GameEngine {
         }
     }
 
+    fun territoriesOwned(state: GameState, playerId: String): Int =
+        state.territories.count { it.ownerId == playerId }
+
+    fun leave(state: GameState, playerId: String): GameState {
+        if (state.status != GameStatus.PLAYING) return state
+        if (state.players.none { it.id == playerId }) return state
+        val wasCurrent = state.currentPlayer?.id == playerId
+        val updated = state.copy(
+            players = state.players.map { if (it.id == playerId) it.copy(hasLeft = true) else it }
+        )
+        if (updated.players.count { !it.hasLeft } <= 1) return finish(updated)
+        return if (wasCurrent) nextTurn(updated) else updated
+    }
+
+    fun restart(state: GameState): GameState =
+        newGame(state.players.map { it.id to it.name })
+
     private fun nextTurn(state: GameState): GameState {
         val size = state.players.size
         var next = (state.currentPlayerIndex + 1) % size
@@ -171,9 +188,25 @@ object GameEngine {
             next = (next + 1) % size
             guard++
         }
-        return state.copy(currentPlayerIndex = next)
+        val newRound = if (next <= state.currentPlayerIndex) state.round + 1 else state.round
+        val advanced = state.copy(currentPlayerIndex = next, round = newRound)
+        return if (newRound > GameConfig.MAX_GAME_ROUNDS) finish(advanced) else advanced
     }
 
     private fun finish(state: GameState): GameState =
-        state.copy(status = GameStatus.FINISHED)
+        state.copy(status = GameStatus.FINISHED, winnerId = computeWinnerId(state))
+
+    private fun computeWinnerId(state: GameState): String? {
+        val candidates = state.players.filter { !it.hasLeft }.ifEmpty { state.players }
+        val ranked = candidates.sortedWith(
+            compareByDescending<Player> { it.score }
+                .thenByDescending { territoriesOwned(state, it.id) }
+        )
+        val best = ranked.firstOrNull() ?: return null
+        val tied = ranked.count {
+            it.score == best.score &&
+                    territoriesOwned(state, it.id) == territoriesOwned(state, best.id)
+        } > 1
+        return if (tied) null else best.id //null = empate
+    }
 }

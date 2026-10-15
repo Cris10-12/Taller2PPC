@@ -7,7 +7,8 @@ data class GameState(
     val currentPlayerIndex: Int = 0,
     val status: GameStatus = GameStatus.WAITING,
     val winnerId: String? = null,
-    val consecutivePasses: Int = 0
+    val consecutivePasses: Int = 0,
+    val round: Int = 1
 ) {
     val currentPlayer: Player? get() = players.getOrNull(currentPlayerIndex)
 }
