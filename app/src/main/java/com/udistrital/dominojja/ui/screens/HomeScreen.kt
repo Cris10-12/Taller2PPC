@@ -21,16 +21,23 @@ fun HomeScreen(
     onCreateRoom: () -> Unit,
     onJoinRoom: () -> Unit,
     onSettings: () -> Unit,
-    onHowToPlay: () -> Unit
-) {
+    onHowToPlay: () -> Unit,
+    userName: String? = null,
+    onGoogleSignIn: () -> Unit = {}
+)  {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
+
     ) {
         Text("Dominó Territorios", style = MaterialTheme.typography.headlineLarge)
+        userName?.let {
+            Spacer(Modifier.height(Spacing.small))
+            Text("Hola, $it", style = MaterialTheme.typography.titleMedium)
+        }
         Spacer(Modifier.height(Spacing.xlarge))
         MenuButton("Jugar", onPlay)
         Spacer(Modifier.height(Spacing.small))
@@ -41,5 +48,11 @@ fun HomeScreen(
         MenuButton("Configuración", onSettings)
         Spacer(Modifier.height(Spacing.small))
         MenuButton("Cómo jugar", onHowToPlay)
+        Spacer(Modifier.height(Spacing.small))
+        MenuButton(
+            if (userName == null) "Continuar con Google" else "Cambiar de cuenta",
+            onGoogleSignIn
+        )
     }
+
 }

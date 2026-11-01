@@ -23,8 +23,6 @@ class LobbyViewModel(
 
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
-
-    // Código de la sala a la que se entró; la UI navega cuando deja de ser null
     private val _joinedRoom = MutableStateFlow<String?>(null)
     val joinedRoom: StateFlow<String?> = _joinedRoom
 
@@ -36,22 +34,33 @@ class LobbyViewModel(
         }
     }
 
-    fun createRoom() = viewModelScope.launch {
-        _loading.value = true
-        val uid = auth.ensureSignedIn()
-        repo.createRoom(uid)
-            .onSuccess { _joinedRoom.value = it }
-            .onFailure { _error.value = it.message }
-        _loading.value = false
+    fun createRoom(name: String, maxPlayers: Int) {
+        viewModelScope.launch {
+            _loading.value = true
+            runCatching { auth.ensureSignedIn() }
+                .onSuccess { uid ->
+                    repo.createRoom(uid, name.trim(), maxPlayers)
+                        .onSuccess { _joinedRoom.value = it }
+                        .onFailure { _error.value = it.message }
+                }
+                .onFailure { _error.value = it.message }
+            _loading.value = false
+        }
     }
 
-    fun joinRoom(code: String) = viewModelScope.launch {
-        _loading.value = true
-        val uid = auth.ensureSignedIn()
-        repo.joinRoom(code.trim().uppercase(), uid)
-            .onSuccess { _joinedRoom.value = code.trim().uppercase() }
-            .onFailure { _error.value = it.message }
-        _loading.value = false
+    fun joinRoom(code: String, name: String) {
+        val clean = code.trim().uppercase()
+        viewModelScope.launch {
+            _loading.value = true
+            runCatching { auth.ensureSignedIn() }
+                .onSuccess { uid ->
+                    repo.joinRoom(clean, uid, name.trim())
+                        .onSuccess { _joinedRoom.value = clean }
+                        .onFailure { _error.value = it.message }
+                }
+                .onFailure { _error.value = it.message }
+            _loading.value = false
+        }
     }
 
     fun clearError() { _error.value = null }

@@ -9,4 +9,10 @@ object Routes {
     const val HOW_TO_PLAY = "how_to_play"
     const val GAME = "game/{players}"
     fun game(players: Int) = "game/$players"
+    const val WAITING_ROOM = "waiting_room/{code}"
+    fun waitingRoom(code: String) = "waiting_room/$code"
+
+    const val GAME_ONLINE = "game_online/{code}"
+
+    fun gameOnline(code: String) = "game_online/$code"
 }

@@ -12,7 +12,20 @@
           "package_name": "com.udistrital.dominojja"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "51700020334-m5coh1m164hja79vr81tngon2dk4qr0f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.udistrital.dominojja",
+            "certificate_hash": "165c706e6c29f7b28a8e5d19d5ea4cacfd12ec17"
+          }
+        },
+        {
+          "client_id": "51700020334-94ra323au9pr8mitoqevov6d66fbm6k3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyD3Z_ZDuHA5lB9EyvPdnP9sRrRFkWN_eko"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "51700020334-94ra323au9pr8mitoqevov6d66fbm6k3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

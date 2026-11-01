@@ -18,22 +18,35 @@ class RoomRepository(
         return (1..Constants.ROOM_CODE_LENGTH).map { chars.random() }.joinToString("")
     }
 
-    suspend fun createRoom(hostId: String): Result<String> = runCatching {
+    suspend fun createRoom(hostId: String, hostName: String, maxPlayers: Int): Result<String> = runCatching {
         val code = generateCode()
-        val room = Room(id = code, hostId = hostId, players = listOf(hostId))
+        val room = Room(
+            id = code,
+            hostId = hostId,
+            hostName = hostName,
+            maxPlayers = maxPlayers,
+            players = listOf(hostId),
+            playerNames = mapOf(hostId to hostName)
+        )
         rooms.document(code).set(room).await()
         code
     }
 
-    suspend fun joinRoom(code: String, playerId: String): Result<Unit> = runCatching {
+    suspend fun joinRoom(code: String, playerId: String, playerName: String): Result<Unit> = runCatching {
         val ref = rooms.document(code.uppercase())
         db.runTransaction { tx ->
             val room = tx.get(ref).toObject(Room::class.java)
                 ?: throw IllegalStateException("La sala no existe")
             check(room.status == Constants.STATUS_WAITING) { "La sala ya inició" }
             if (playerId !in room.players) {
-                check(room.players.size < Constants.MAX_PLAYERS) { "La sala está llena" }
-                tx.update(ref, "players", room.players + playerId)
+                check(room.players.size < room.maxPlayers) { "La sala está llena" }
+                tx.update(
+                    ref,
+                    mapOf(
+                        "players" to room.players + playerId,
+                        "playerNames.$playerId" to playerName
+                    )
+                )
             }
         }.await()
     }
@@ -59,4 +72,16 @@ class RoomRepository(
         }
         awaitClose { reg.remove() }
     }
+    suspend fun startGame(code: String): Result<Unit> = runCatching {
+        rooms.document(code).update("status", Constants.STATUS_PLAYING).await()
+    }
+    suspend fun publishState(code: String, json: String, expectedVersion: Long): Result<Unit> = runCatching {
+        val ref = rooms.document(code)
+        db.runTransaction { tx ->
+            val current = tx.get(ref).getLong("version") ?: 0L
+            check(current == expectedVersion) { "Estado desactualizado" }
+            tx.update(ref, mapOf("gameStateJson" to json, "version" to current + 1))
+        }.await()
+    }
+
 }
