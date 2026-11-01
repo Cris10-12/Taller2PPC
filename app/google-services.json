@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "51700020334",
+    "project_id": "domino-conquista",
+    "storage_bucket": "domino-conquista.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:51700020334:android:42b17a63920c812587227f",
+        "android_client_info": {
+          "package_name": "com.udistrital.dominojja"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3Z_ZDuHA5lB9EyvPdnP9sRrRFkWN_eko"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

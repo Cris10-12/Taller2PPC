@@ -8,6 +8,7 @@ import com.udistrital.dominojja.ui.theme.DominoJjaTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContent {
             DominoJjaTheme() {
