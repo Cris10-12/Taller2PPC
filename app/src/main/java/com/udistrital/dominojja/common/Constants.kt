@@ -1,6 +1,16 @@
 package com.udistrital.dominojja.common
 
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.dp
+
+object Constants {
+    const val COLLECTION_ROOMS = "rooms"
+    const val ROOM_CODE_LENGTH = 5
+    const val MAX_PLAYERS = 4
+    const val STATUS_WAITING = "waiting"
+    const val STATUS_PLAYING = "playing"
+    const val STATUS_FINISHED = "finished"
+}
 
 object Spacing {
     val small = 12.dp
